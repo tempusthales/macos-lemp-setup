@@ -1,13 +1,13 @@
 # LEMP: Local Environment Made Powerful 
 (Just kidding, it's really **Linux + nginx [engine x] + MySQL + PHP-FPM**)
 
-## Still the best way to locally develop WordPress.
+## Still the best way to locally develop ~~WordPress~~ #fuckwordpress / [CraftCMS](https://craftcms.com). 
 
 ![macos-lemp](https://user-images.githubusercontent.com/1534150/159696251-1b8adbee-f752-4107-9183-78107ffb4969.png)
 
 **macOS LEMP Setup is Mac only!**
 
-Interested in similar approach on Windows? 👉 [Setting up a local server on Windows 10 for WordPress theme development (or any web development for that matter)](https://rolle.design/local-server-on-windows-10-for-wordpress-theme-development).
+Interested in similar approach on Windows? 👉 Too bad! Windows is for playing video games.
 
 ## Install local LEMP for macOS
 
@@ -16,12 +16,12 @@ For *Front End development*, a full Vagrant box, docker container per site or Lo
 Don't just run the oneliner in blind, please see [installation steps](#installation) instructions first.
 
 ```` bash
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/digitoimistodude/macos-lemp-setup/master/install.sh)"
+/bin/bash -c "$(curl -fsSL https://github.com/tempusthales/macos-lemp-setup/blob/master/install.sh)"
 ````
 
-Oneliner may not go through in macOS Big Sur and macOS Monterey, in that caes you need to copy and paste commands manually from [install.sh](https://raw.githubusercontent.com/digitoimistodude/macos-lemp-setup/master/install.sh).
+Oneliner may not go through in macOS Big Sur and macOS Monterey, in that caes you need to copy and paste commands manually from [install.sh](https://raw.githubusercontent.com/tempusthales/macos-lemp-setup/master/install.sh).
 
-**Please note:** Don't trust blindly to the script, use only if you know what you are doing. You can view the file [here](https://github.com/digitoimistodude/osx-lemp-setup/blob/master/install.sh) if having doubts what commands are being run. However, script is tested working many times and should be safe to run even if you have some or all of the components already installed.
+**Please note:** Don't trust blindly to the script, use only if you know what you are doing. You can view the file [here](https://raw.githubusercontent.com/tempusthales/macos-lemp-setup/master/install.sh) if having doubts what commands are being run. However, script is tested working many times and should be safe to run even if you have some or all of the components already installed.
 
 ## Table of contents
 
@@ -43,47 +43,46 @@ Read the full story by [@ronilaukkarinen](https://github.com/ronilaukkarinen): *
 
 ### Features
 
-- PHP 7.4
-- nginx 1.19.2
+- PHP ~~7.4~~ 8.1
+- nginx 1.21.6
 - Super lightweight
 - Native packages
 - Always on system service
 - HTTPS support
 - Consistent with production setup
-- Works even [on Windows](https://github.com/digitoimistodude/windows-lemp-setup)
 
 ### Requirements
 
 - [Homebrew](https://brew.sh/)
-- macOS, preferably 10.14.2 (Mojave)
+- macOS, preferably 12.4 (Monterey)
 - wget
 - [mkcert](https://github.com/FiloSottile/mkcert)
 
 ### Installation
 
-1. Run oneliner installation script `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/digitoimistodude/macos-lemp-setup/master/install.sh)"`
-2. Link PHP executable like this: **Run:** `sudo find / -name 'php'`. When you spot link that looks like this (yours might be different version) */usr/local/Cellar/php@7.4/7.4.23/bin/php*, symlink it to correct location to override MacOS's own file: `sudo ln -s /usr/local/Cellar/php@7.4/7.4.23/bin/php /usr/local/bin/php`
+1. Run oneliner installation script `/bin/bash -c "$(curl -fsSL https://github.com/tempusthales/macos-lemp-setup/blob/master/install.sh)"`
+2. Link PHP executable like this: **Run:** `sudo find / -name 'php'`. When you spot link that looks like this (yours might be different version) */usr/local/Cellar/php@8.1/8.1.2/bin/php*, symlink it to correct location to override MacOS's own file: `sudo ln -s /usr/local/Cellar/php@8.1/8.1.2/bin/php /usr/local/bin/php`
 3. Use PHP path from correct location by adding to your ~/.bash_profile file, `sudo nano ~/.bash_profile` (change your PHP version accordingly)
    ``` shell
    export PATH="$(brew --prefix php@7.2)/bin:$PATH"
    export PATH="$(brew --prefix php@7.3)/bin:$PATH"
    export PATH="$(brew --prefix php@7.4)/bin:$PATH"
+   export PATH="$(brew --prefix pgp@8.1)/bin:$PATH"
    ```
 4. Check the version with `php --version`, it should match the linked file.
 5. Brew should have already handled other links, you can test the correct versions with `sudo mysql --version` (if it's something like _mysql  Ver 15.1 Distrib 10.5.5-MariaDB, for osx10.15 (x86_64) using readline 5.1_ it's the correct one) and `sudo nginx -v` (if it's something like nginx version: nginx/1.19.3 it's the correct one)
-6. Add `export PATH="$(brew --prefix php@7.4)/bin:$PATH"` to .bash_profile (or to your zsh profile or to whatever term profile you are currently using)
+6. Add `export PATH="$(brew --prefix php@8.1)/bin:$PATH"` to .bash_profile (or to your zsh profile or to whatever term profile you are currently using)
 7. Go through [post installations](#post-installations)
-8. Enjoy! If you use [dudestack](https://github.com/digitoimistodude/dudestack), please check instructions from [its own repo](https://github.com/digitoimistodude/dudestack).
 
 ### Post installations
 
-You may want to add your user and group correctly to `/usr/local/etc/php/7.4/php-fpm.d/www.conf` and set these to the bottom:
+You may want to add your user and group correctly to `/usr/local/etc/php/8.1/php-fpm.d/www.conf` and set these to the bottom:
 
 ````
 catch_workers_output = yes
 php_flag[display_errors] = On
 php_admin_value[error_log] = /var/log/fpm7.4-php.www.log 
-slowlog = /var/log/fpm7.4-php.slow.log 
+slowlog = /var/log/fpm8.1-php.slow.log 
 php_admin_flag[log_errors] = On
 php_admin_value[memory_limit] = 1024M
 request_slowlog_timeout = 10
@@ -130,8 +129,6 @@ skip-name-resolve
 
 For mysql, <b>remember to run `sudo mysql_secure_installation`</b>, answer as suggested, add/change root password, remove test users etc. <b>Only exception!</b> Answer with <kbd>n</kbd> to the question <code>Disallow root login remotely? [Y/n]</code>. Your logs can be found at `/usr/local/var/mysql/yourcomputername.err` (where yourcomputername is obviously your hostname).
 
-After that, get to know [dudestack](https://github.com/digitoimistodude/dudestack) to get everything up and running smoothly. Current version of dudestack supports macOS LEMP stack.
-
 You should remember to add vhosts to your /etc/hosts file, for example: `127.0.0.1 site.test`.
 
 ### Use Linux-style aliases
@@ -161,19 +158,11 @@ MailHog should be pre-installed but if not, run following:
 brew update && brew install mailhog
 ```
 
-Ensure you have the latest [air-helper](https://github.com/digitoimistodude/air-helper) or [MailHog for WordPress](https://wordpress.org/plugins/wp-mailhog-smtp/) activated to enable MailHog routing for local environment.
-
-Then just run:
-
-``` bash
-mailhog
-```
-
 You should now get a log in command line and web interface is available in http://0.0.0.0:8025/.
 
 ### File sizes
 
-You might want to increase file sizes for development environment in case you need to test compression plugins and other stuff in WordPress. To do so, edit `/usr/local/etc/php/7.4/php-fpm.d/www.conf` and `/usr/local/etc/php/7.4/php.ini` and change all **memory_limit**, **post_max_size** and **upload_max_filesize** to something that is not so limited, for example **500M**.
+You might want to increase file sizes for development environment in case you need to test compression plugins and other stuff in WordPress. To do so, edit `/usr/local/etc/php/8.1/php-fpm.d/www.conf` and `/usr/local/etc/php/8.1/php.ini` and change all **memory_limit**, **post_max_size** and **upload_max_filesize** to something that is not so limited, for example **500M**.
 
 Please note, you also need to change **client_max_body_size** to the same amount in `/etc/nginx/nginx.conf`. After this, restart php-fpm with `sudo brew services restart php@7.4` and nginx with `sudo brew services restart nginx`.
 
@@ -188,6 +177,7 @@ sudo openssl dhparam -dsaparam -out dhparam.pem 4096
 ````
 
 Generating certificates for dev environment is easiest with [mkcert](https://github.com/FiloSottile/mkcert). After installing mkcert, just run:
+(if you use Cloudflare Tunnels, then you don't need this...)
 
 ```` bash
 mkdir -p /var/www/certs && cd /var/www/certs && mkcert "project.test"
@@ -335,7 +325,7 @@ Before installation, make sure you do not use PHP provided by macOS. You should 
 
 Test with `php --version` what version of PHP you are using, if the command returns something like `PHP is included in macOS for compatibility with legacy software` and especially when `which php` is showing /usr/bin/php then you are using macOS built-in version (which will be removed in the future anyway) and things most probably won't work as expected.
 
-To fix this, run command `sudo ln -s /usr/local/Cellar/php@7.4/7.4.23/bin/php /usr/local/bin/php` which symlinks the homebrew version to be used instead of macOS version OR use bashrc export as defined [here in step 4](https://github.com/digitoimistodude/macos-lemp-setup#installation).
+To fix this, run command `sudo ln -s /usr/local/Cellar/php@8.1/8.1.2/bin/php /usr/local/bin/php` which symlinks the homebrew version to be used instead of macOS version.
 
 #### PHP or mysql not working at all
 
