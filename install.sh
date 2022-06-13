@@ -107,40 +107,40 @@ sudo echo "location ~ \.php\$ {
   fastcgi_index index.php;
   fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
   fastcgi_pass 127.0.0.1:9000;
-}" > "/etc/nginx/php7.conf"
-sudo echo "# WordPress single site rules.
+}" > "/etc/nginx/php8.conf"
+# sudo echo "# WordPress single site rules.
 # Designed to be included in any server {} block.
 # Upstream to abstract backend connection(s) for php
-location = /favicon.ico {
-        log_not_found off;
-        access_log off;
-}
+# location = /favicon.ico {
+#         log_not_found off;
+#         access_log off;
+# }
 
-location = /robots.txt {
-        allow all;
-        log_not_found off;
-        access_log off;
-}
+# location = /robots.txt {
+#         allow all;
+#         log_not_found off;
+#         access_log off;
+# }
 
-location / {
+# location / {
         # This is cool because no php is touched for static content.
         # include the "?\$args" part so non-default permalinks doesn't break when using query string
-        try_files \$uri \$uri/ /index.php?\$args;
-}
+#         try_files \$uri \$uri/ /index.php?\$args;
+# }
 
 # Add trailing slash to */wp-admin requests.
-rewrite /wp-admin\$ \$scheme://\$host\$uri/ permanent;
+# rewrite /wp-admin\$ \$scheme://\$host\$uri/ permanent;
 
 # Directives to send expires headers and turn off 404 error logging.
 location ~* ^.+\.(ogg|ogv|svg|svgz|eot|otf|woff|mp4|ttf|rss|atom|jpg|jpeg|gif|png|ico|zip|tgz|gz|rar|bz2|doc|xls|exe|ppt|tar|mid|midi|wav|bmp|rtf)\$ {
        access_log off; log_not_found off; expires max;
-}" > "/etc/nginx/global/wordpress.conf"
+ }" > "/etc/nginx/global/craftcms.conf"
 sudo echo "server {
         listen 80 default_server;
         root html;
         index index.html index.htm index.php;
         server_name localhost;
-        include php7.conf;
+        include php8.conf;
         #include global/wordpress.conf;
 }" > "/etc/nginx/sites-available/default"
 sudo ln -sfnv /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
@@ -148,24 +148,24 @@ echo "${yellow}Installing PHP.${txtreset}"
 brew tap homebrew/dupes
 brew tap homebrew/versions
 brew tap homebrew/homebrew-php
-brew install php@7.4
+brew install php
 mkdir -p ~/Library/LaunchAgents
-cp /usr/local/opt/php@7.4/homebrew.mxcl.php@7.4.plist ~/Library/LaunchAgents/
+cp /usr/local/opt/php@8.1/homebrew.mxcl.php@7.4.plist ~/Library/LaunchAgents/
 sudo launchctl load -w ~/Library/LaunchAgents/homebrew.mxcl.php\@7.4.plist 
 lsof -Pni4 | grep LISTEN | grep php
 sudo mv /private/etc/php-fpm.conf /private/etc/php-fpm.conf.old
-sudo ln -s /usr/local/etc/php/7.4/php-fpm.conf /private/etc/php-fpm.conf
+sudo ln -s /usr/local/etc/php/8.1/php-fpm.conf /private/etc/php-fpm.conf
 sudo sed -i '' 's/;error_log/error_log/' /private/etc/php-fpm.conf
 sudo sed -i '' 's/log\/php-fpm.log/\/var\/log\/php-fpm.log/' /private/etc/php-fpm.conf
-sudo touch /var/log/fpm7.4-php.slow.log
-sudo chmod 775 /var/log/fpm7.4-php.slow.log
-sudo chown "$USER":staff /var/log/fpm7.4-php.slow.log
-sudo touch /var/log/fpm7.4-php.www.log
-sudo chmod 775 /var/log/fpm7.4-php.www.log
-sudo chown "$USER":staff /var/log/fpm7.4-php.www.log
-sudo echo "export PATH=\"\$(brew --prefix php@7.4)/bin:\$PATH\"" >> ~/.bashrc
-sudo brew services stop php@7.4
-sudo brew services start php@7.4
+sudo touch /var/log/fpm8.1-php.slow.log
+sudo chmod 775 /var/log/fpm8.1-php.slow.log
+sudo chown "$USER":staff /var/log/fpm8.1-php.slow.log
+sudo touch /var/log/fpm8.1-php.www.log
+sudo chmod 775 /var/log/fpm8.1-php.www.log
+sudo chown "$USER":staff /var/log/fpm8.1-php.www.log
+sudo echo "export PATH=\"\$(brew --prefix php@8.1)/bin:\$PATH\"" >> ~/.bashrc
+sudo brew services stop php@8.1
+sudo brew services start php@8.1
 echo "${boldgreen}PHP installed and running.${txtreset}"
 echo "${yellow}Installing MariaDB.${txtreset}"
 brew install mariadb
@@ -190,9 +190,9 @@ query_cache_limit = 512K
 query_cache_size = 128M
 skip-name-resolve" > "/usr/local/etc/my.cnf"
 echo "${boldgreen}MariaDB installed and running.${txtreset}"
-echo "${yellow}Installing MailHog.${txtreset}"
-brew update && brew install mailhog
-echo "${boldgreen}MailHog installed (run mailhog to start mail server).${txtreset}"
+# echo "${yellow}Installing MailHog.${txtreset}"
+# brew update && brew install mailhog
+# echo "${boldgreen}MailHog installed (run mailhog to start mail server).${txtreset}"
 echo "${yellow}Installing DNSmasq.${txtreset}"
 brew install dnsmasq
 curl -L https://gist.githubusercontent.com/dtomasi/ab76d14338db82ec24a1fc137caff75b/raw/550c84393c4c1eef8a3e68bb720df561b5d3f175/dnsmasq.conf -o /usr/local/etc/dnsmasq.conf
@@ -206,8 +206,8 @@ sudo brew services stop dnsmasq
 sudo brew services start dnsmasq
 sudo brew services stop nginx
 sudo brew services start nginx
-sudo brew services stop php@7.4
-sudo brew services start php@7.4
+sudo brew services stop php@8.1
+sudo brew services start php@8.1
 brew services stop mariadb
 brew services start mariadb
 sudo brew services list
